@@ -2,7 +2,33 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 # All images will be rescaled by 1./255
-train_datagen = ImageDataGenerator(rescale=1/255)
+augmentation = True
+if augmentation:
+  # train_datagen = ImageDataGenerator(
+  #   rescale=1./255,
+  #   rotation_range=40, # Rotating each image randomly up to 40 degrees left or right
+  #   width_shift_range=0.2,
+  #   height_shift_range=0.2,
+  #   shear_range=0.2,
+  #   zoom_range=0.2,
+  #   horizontal_flip=True, # Randomly flipping the image horizontally or vertically
+  #   fill_mode='nearest' # Filling in any missing pixels after a move or shear with nearest neighbors
+  # )
+
+  # I think agumented too much, try a bit less:
+  train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    # rotation_range=40, # Rotating each image randomly up to 40 degrees left or right
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    # shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True, # Randomly flipping the image horizontally or vertically
+    fill_mode='nearest' # Filling in any missing pixels after a move or shear with nearest neighbors
+  )
+else:
+  # old with no augmentation
+  train_datagen = ImageDataGenerator(rescale=1/255)
 
 training_dir="horse-or-human/training"
 
@@ -21,6 +47,7 @@ validation_datagen = ImageDataGenerator(rescale=1/255)
 validation_generator = train_datagen.flow_from_directory(
   validation_dir,
   target_size=(300, 300),
+  # batch_size=128,
   class_mode='binary'
 )
 
@@ -54,16 +81,11 @@ model.compile(loss='binary_crossentropy',
        metrics=['accuracy'])
 
 
-# history = model.fit_generator(
-#   train_generator,
-#   epochs=15
-# )
-
-
 history = model.fit(
       train_generator,
       steps_per_epoch=8,
-      epochs=15,
+      epochs=20,
       verbose=1,
       validation_data=validation_generator)
 
+# from horse_or_human import history, model
