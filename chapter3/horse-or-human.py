@@ -32,11 +32,6 @@ model = tf.keras.models.Sequential([
 ])
 
 from tensorflow.keras.optimizers import RMSprop
-
-
-
-
-
 model.compile(loss='binary_crossentropy',
        optimizer=RMSprop(lr=0.001),
        metrics=['accuracy'])
@@ -45,4 +40,3 @@ history = model.fit_generator(
   train_generator,
   epochs=15
 )
-
